@@ -5,7 +5,6 @@ use crate::prelude::*;
 pub struct StrOrCharTracker {
   len: usize,
   inner: Inner,
-  escape_suffix: bool,
 }
 
 #[derive(Clone,Copy,PartialEq,Eq)]
@@ -39,7 +38,6 @@ impl StrOrCharTracker {
     Some(Self {
       len,
       inner,
-      escape_suffix: false,
     })
   }
 

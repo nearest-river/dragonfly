@@ -139,10 +139,6 @@ impl Lexer<'_> {
           }
         }
 
-        if ch==b'\\' {
-          i+=2;
-        }
-
         // handling string literals
         if tracker.is_none() && let Some(str_or_char_tracker)=StrOrCharTracker::try_start(&self.buf[i..]) {
           let prefix_len=str_or_char_tracker.prefix_len();

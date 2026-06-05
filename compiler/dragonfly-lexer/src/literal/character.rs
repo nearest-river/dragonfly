@@ -11,11 +11,10 @@ pub enum CharKind {
 
 
 impl CharKind {
-  pub(crate) const CHAR_PREFIX: &[u8]=b"\'";
-  pub(crate) const BCHAR_PREFIX: &[u8]=b"b\'";
+  pub(crate) const CHAR_PREFIX: &[u8]=b"'";
+  pub(crate) const BCHAR_PREFIX: &[u8]=b"b'";
 
-  pub(crate) const SUFFIXB: u8=b'\'';
-  pub(crate) const SUFFIX: &[u8]=b"\'";
+  pub(crate) const SUFFIX: &[u8]=b"'";
 
   #[inline(always)]
   pub const fn prefix(&self)-> &[u8] {
@@ -53,7 +52,7 @@ impl CharKind {
     }
 
     let start=prefix.len();
-    let end=buf.len()-suffix.len();
+    let end=buf.len() - suffix.len();
     let unquoted=&buf[start..end];
 
     match unescape::unescape(std::str::from_utf8(unquoted)?) {
