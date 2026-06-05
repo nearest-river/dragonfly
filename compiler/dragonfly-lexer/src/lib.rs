@@ -1,14 +1,41 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+mod util;
+mod lexer;
+mod token_hint;
+mod lex_tracker;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub mod span;
+pub mod error;
+pub mod ident;
+pub mod token;
+pub mod literal;
+pub mod prelude;
+pub mod comment;
+
+pub use crate::{
+  token::*,
+  span::Span,
+  lexer::Lexer,
+};
+
+
+// Make sure that the Unicode version of the dependencies is the same.
+const _: () = {
+  let ident=unicode_ident::UNICODE_VERSION;
+  let properties=unicode_properties::UNICODE_VERSION;
+
+
+  if properties.0 != ident.0 as u64
+    || properties.1 != ident.1 as u64
+    || properties.2 != ident.2 as u64
+  {
+    panic!(
+      "unicode-properties and unicode-ident must use the same Unicode version, \
+      `unicode_properties::UNICODE_VERSION` and `unicode_ident::UNICODE_VERSION` are \
+      different."
+    );
+  }
+};
+
+
+
