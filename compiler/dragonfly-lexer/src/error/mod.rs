@@ -1,9 +1,18 @@
 
-pub use std::str::Utf8Error;
 pub use lexical_core::Error as ParseNumberErr;
 
+pub use std::{
+  str::Utf8Error,
+  fmt::{
+    self,
+    Debug,
+    Formatter,
+  },
+};
 
-#[derive(Clone,Debug,PartialEq,Eq)]
+
+
+#[derive(Clone,PartialEq,Eq)]
 pub enum Reason {
   ParseCharErr(ParseCharErr),
   ParseIdentErr(ParseIdentErr),
@@ -71,11 +80,17 @@ impl From<Utf8Error> for ParseCharErr {
 }
 
 
-
-
-
-
-
+impl Debug for Reason {
+  fn fmt(&self,f: &mut Formatter<'_>)-> fmt::Result {
+    match self {
+      Self::ParseCharErr(err)=> Debug::fmt(&err,f),
+      Self::ParseIdentErr(err)=> Debug::fmt(&err,f),
+      Self::ParseStringErr(err)=> Debug::fmt(&err,f),
+      Self::ParseNumberErr(err)=> Debug::fmt(&err,f),
+      Self::ParseCommentErr(err)=> Debug::fmt(&err,f),
+    }
+  }
+}
 
 
 

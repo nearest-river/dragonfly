@@ -22,18 +22,22 @@ pub struct Token<'a> {
 
 impl Debug for Token<'_> {
   fn fmt(&self,f: &mut Formatter<'_>)-> fmt::Result {
-    Debug::fmt(&self.kind,f)?;
     let repr=str::from_utf8(self.repr).unwrap();
+    if matches!(self.kind,TokenKind::Illegal(_)) {
+      write!(f,"[{:#?}] ",repr)?;
+    }
+
+    Debug::fmt(&self.kind,f)?;
 
     if !f.alternate() {
       let Span { hi, lo }=self.span;
       return write!(f,"({lo}..{hi})");
     }
 
-    if let TokenKind::Literal(LiteralKind::Str(_)|LiteralKind::Char(_))=&self.kind {
-      write!(f,"({repr})")
-    } else {
-      write!(f,"({repr:#?})")
+    match &self.kind {
+      TokenKind::Literal(LiteralKind::Str(_)|LiteralKind::Char(_))=> write!(f,"({repr})"),
+      TokenKind::Illegal(_)=> Ok(()),
+      _=> write!(f,"({repr:#?})"),
     }
   }
 }
