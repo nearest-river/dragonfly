@@ -11,6 +11,7 @@ pub mod token;
 pub mod literal;
 pub mod prelude;
 pub mod comment;
+pub mod lifetime;
 
 pub use crate::{
   token::*,

@@ -30,7 +30,7 @@ pub fn parse(buf: &[u8],raw: bool)-> TokenKind {
 
 #[inline]
 #[track_caller]
-fn validate_ident(repr: &str)-> Result<(),usize> {
+pub(crate) fn validate_ident(repr: &str)-> Result<(),usize> {
   debug_assert!(!repr.is_empty());
 
   if repr.bytes().all(|byte| byte.is_ascii_digit()) {
@@ -62,7 +62,7 @@ fn validate_ident(repr: &str)-> Result<(),usize> {
 
 #[inline]
 #[track_caller]
-fn validate_ident_raw(repr: &str)-> Result<(),usize> {
+pub(crate) fn validate_ident_raw(repr: &str)-> Result<(),usize> {
   match repr {
     "_"|"super"|"self"|"Self"|"crate"=> Err(0),
     repr=> validate_ident(repr)
@@ -70,12 +70,12 @@ fn validate_ident_raw(repr: &str)-> Result<(),usize> {
 }
 
 #[inline(always)]
-fn is_start(ch: char)-> bool {
+pub(crate) fn is_start(ch: char)-> bool {
   ch=='_' || unicode_ident::is_xid_start(ch)
 }
 
 #[inline(always)]
-fn is_continue(ch: char)-> bool {
+pub(crate) fn is_continue(ch: char)-> bool {
   unicode_ident::is_xid_continue(ch)
 }
 

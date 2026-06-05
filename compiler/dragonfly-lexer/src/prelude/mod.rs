@@ -7,6 +7,7 @@ pub(crate) use std::num::*;
 #[allow(unused_imports)]
 pub(crate) use crate::{
   error::*,
+  lifetime,
   token_hint::*,
   util::{
     self,

@@ -12,12 +12,10 @@ pub enum TokenKind {
   // wtf?
   Ident,
   RawIdent,
+  Lifetime,
   RawLifetime,
   Illegal(Reason),
   Comment(CommentKind),
-  Lifetime {
-    starts_with_number: bool,
-  },
 
   // literals
   Literal(LiteralKind),

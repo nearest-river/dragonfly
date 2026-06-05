@@ -98,6 +98,8 @@ impl<'a> Iterator for Lexer<'a> {
       TokenHintKind::Char(kind)=> character::parse(token,kind),
       TokenHintKind::Comment(kind)=> comment::parse(token,kind),
       TokenHintKind::Illegal(reason)=> TokenKind::Illegal(reason),
+      TokenHintKind::Lifetime=> lifetime::parse(token,false),
+      TokenHintKind::RawLifetime=> lifetime::parse(token,true),
     };
 
     Some(Token {
@@ -140,14 +142,14 @@ impl Lexer<'_> {
         }
 
         // handling string literals
-        if tracker.is_none() && let Some(str_or_char_tracker)=StrOrCharTracker::try_start(&self.buf[i..]) {
-          let prefix_len=str_or_char_tracker.prefix_len();
-          tracker=Some(LexTracker::StrOrChar(str_or_char_tracker));
+        if tracker.is_none() && let Some(quotable_tracker)=QuotableTracker::try_start(&self.buf[i..]) {
+          let prefix_len=quotable_tracker.prefix_len();
+          tracker=Some(LexTracker::Quotable(quotable_tracker));
 
           i+=prefix_len;
           continue;
-        } else if let Some(LexTracker::StrOrChar(str_or_char_tracker))=&mut tracker {
-          if let Some(hint)=str_or_char_tracker.try_finish(&self.buf[i..]) {
+        } else if let Some(LexTracker::Quotable(quotable_tracker))=&mut tracker {
+          if let Some(hint)=quotable_tracker.try_finish(&self.buf[i..]) {
             return hint;
           }
         }

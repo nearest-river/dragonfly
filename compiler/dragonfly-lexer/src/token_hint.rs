@@ -14,6 +14,8 @@ pub enum TokenHintKind {
   Char(CharKind),
   Comment(CommentKind),
   Illegal(Reason),
+  RawLifetime,
+  Lifetime,
   RIdent,
   Other,
 }
@@ -41,8 +43,10 @@ impl TokenHintKind {
       Self::Str(kind)=> Some(kind.suffix_len()),
       Self::Char(kind)=> Some(kind.suffix_len()),
       Self::Int(None)|Self::Float(None)=> None,
-      Self::RIdent=> None,
+      Self::RawLifetime=> None,
       Self::Illegal(_)=> None,
+      Self::Lifetime=> None,
+      Self::RIdent=> None,
       Self::Other=> None,
     }
   }
