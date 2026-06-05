@@ -5,6 +5,9 @@ fn main()-> anyhow::Result<(),String> {
   let _xd=69_420f32;
   let r#_xd=r#" "lolxd69" "#;
 
+  goto 'end;
+
+  'end:
   Ok(())
 }
 

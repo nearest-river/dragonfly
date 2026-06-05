@@ -261,6 +261,7 @@ impl Lexer<'_> {
       b"false"       => TokenKind::Literal(LiteralKind::Bool),
       b"fn"          => TokenKind::Fn,
       b"for"         => TokenKind::For,
+      b"goto"        => TokenKind::Goto,
       b"if"          => TokenKind::If,
       b"impl"        => TokenKind::Impl,
       b"in"          => TokenKind::In,
