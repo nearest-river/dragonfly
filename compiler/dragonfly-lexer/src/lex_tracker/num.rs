@@ -49,9 +49,6 @@ impl NumLexTracker {
     Some(Self::new(inner))
   }
 
-  // TODO(nate): just fix me..
-  // hex,bin,oct prefixes dont work properly
-  // and also need to support them for floats
   pub fn try_finish(&mut self,buf: &[u8])-> Option<TokenHint> {
     self.len+=1;
     match (&mut self.inner,buf[0]) {
@@ -99,7 +96,7 @@ impl NumLexTracker {
     match &self.inner {
       Inner::Dec(props) if props.none()=> Some(TokenHint::new(self.len,TokenHintKind::INFERRED_INT)),
       Inner::Dec(_)=> Some(TokenHint::new(self.len,TokenHintKind::INFERRED_FLOAT)),
-      _=> unreachable!()
+      _=> unreachable!("binary number formats cant reach the float section.")
     }
   }
 

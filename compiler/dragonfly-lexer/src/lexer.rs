@@ -88,7 +88,6 @@ impl<'a> Iterator for Lexer<'a> {
 
     self.update(len);
 
-    // TODO(nate): add lifetimes..
     let kind=match hint {
       TokenHintKind::Other=> Self::parse_lookup(token),
       TokenHintKind::RIdent=> ident::parse(token,true),
@@ -215,7 +214,7 @@ impl Lexer<'_> {
 
     let pats=match Self::seperator_pats(ch0) {
       Some(pats)=> pats,
-      None=> unreachable!(),
+      None=> unreachable!("`ch0` must have atleast one seperator pat, the other cases had been handles previously."),
     };
 
     // pattern img is defiened in ascending order of length.

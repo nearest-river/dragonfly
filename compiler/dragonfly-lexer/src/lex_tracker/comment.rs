@@ -68,7 +68,7 @@ impl CommentLexTracker {
     // we had already added 1 to `self.len` once which belongs to the span of `suffix_len`
     self.len-=1;
     match &self.inner {
-      Inner::DocLine|Inner::Line=> unreachable!(),
+      Inner::DocLine|Inner::Line=> unreachable!("line comments are handled seperately"),
       Inner::Block(_)=> Some(TokenHint::new(self.len,self.hint_kind())),
       Inner::DocBlock(_)=> Some(TokenHint::new(self.len,self.hint_kind())),
     }

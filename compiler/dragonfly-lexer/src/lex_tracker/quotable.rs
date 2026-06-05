@@ -1,7 +1,5 @@
 
 
-use std::str::from_utf8;
-
 use crate::{
   ident,
   prelude::*,
@@ -71,7 +69,7 @@ impl QuotableTracker {
         .inspect_err(|_| self.len+=1)
         .ok()?;
         // everything in the ascii world.
-        // `None` should be an unrecheable case.
+        // `None` should be an unrechable case.
         let ch0=repr.chars().next()?;
 
         if !ident::is_continue(ch0) {

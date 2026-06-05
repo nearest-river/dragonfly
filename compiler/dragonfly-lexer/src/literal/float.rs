@@ -73,10 +73,10 @@ impl FloatKind {
 
     let repr=self.repr_without_ty_suffix(buf);
     match self {
-      Self::F16=> unimplemented!(),
+      Self::F16=> unimplemented!("f16 is not stable yet."),
       Self::F32=> { lexical::parse_with_options::<f32,_,FMT>(repr,&options)?; },
       Self::F64=> { lexical::parse_with_options::<f64,_,FMT>(repr,&options)?; },
-      Self::F128=> unimplemented!(),
+      Self::F128=> unimplemented!("f128 is not stable yet."),
     };
 
     Ok(TokenKind::Literal(LiteralKind::Float(self)))
