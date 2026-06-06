@@ -1,9 +1,9 @@
 
 use dragonfly_lexer::Lexer;
 
-static MAIN: &[u8]=include_bytes!("../assets/main.df");
-static CHARS: &[u8]=include_bytes!("../assets/chars.df");
-static LIFETIMES: &[u8]=include_bytes!("../assets/lifetimes.df");
+static MAIN: &[u8]=include_bytes!("../../assets/main.df");
+static CHARS: &[u8]=include_bytes!("../../assets/chars.df");
+static LIFETIMES: &[u8]=include_bytes!("../../assets/lifetimes.df");
 
 #[test]
 fn main() {
