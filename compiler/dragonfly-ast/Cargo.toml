@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+dragonfly-span = { path = "../dragonfly-span" }
 dragonfly-lexer = { path = "../dragonfly-lexer/" }
 
 
