@@ -70,8 +70,8 @@ impl<'b> Lexer<'b> {
 
 
 impl<'a> Iterator for Lexer<'a> {
-  type Item=Token<'a>;
-  fn next(&mut self)-> Option<Token<'a>> {
+  type Item=Token;
+  fn next(&mut self)-> Option<Token> {
     self.skip_whitespaces();
     if self.is_eof() {
       return None;
@@ -104,8 +104,6 @@ impl<'a> Iterator for Lexer<'a> {
     Some(Token {
       span,
       kind,
-      repr: token,
-      _marker: MARKER,
     })
   }
 }

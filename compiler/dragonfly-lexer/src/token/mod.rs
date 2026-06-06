@@ -11,34 +11,26 @@ use std::fmt::{
 };
 
 
-pub struct Token<'a> {
+pub struct Token {
   pub span: Span,
   pub kind: TokenKind,
-  pub repr: &'a [u8],
-  pub(crate) _marker: ProcMacroAutoTraits,
 }
 
 
 
-impl Debug for Token<'_> {
+impl Debug for Token {
+  #[inline]
   fn fmt(&self,f: &mut Formatter<'_>)-> fmt::Result {
-    let repr=str::from_utf8(self.repr).unwrap();
-    if matches!(self.kind,TokenKind::Illegal(_)) {
-      write!(f,"[{:#?}] ",repr)?;
+    if f.alternate() {
+      return Debug::fmt(&self.kind,f);
     }
 
-    Debug::fmt(&self.kind,f)?;
+    let mut fmt=f.debug_struct(stringify!(Token));
 
-    if !f.alternate() {
-      let Span { hi, lo }=self.span;
-      return write!(f,"({lo}..{hi})");
-    }
+    fmt.field("kind",&self.kind);
+    fmt.field("span",&self.span);
 
-    match &self.kind {
-      TokenKind::Literal(LiteralKind::Str(_)|LiteralKind::Char(_))=> write!(f,"({repr})"),
-      TokenKind::Illegal(_)=> Ok(()),
-      _=> write!(f,"({repr:#?})"),
-    }
+    fmt.finish()
   }
 }
 
