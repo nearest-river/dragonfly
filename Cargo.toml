@@ -2,6 +2,8 @@
 [workspace]
 resolver = "3"
 members = [
+  "compiler/dragonfly-ast",
+  "compiler/dragonfly-span",
   "compiler/dragonfly-lexer",
 ]
 
