@@ -1,8 +1,13 @@
 
-
 use crate::prelude::*;
+use std::fmt::{
+  self,
+  Debug,
+  Formatter,
+};
 
-#[derive(Clone,Debug)]
+
+#[derive(Clone)]
 pub struct Group {
   pub(crate) span: Span,
   pub(crate) stream: TokenStream,
@@ -76,6 +81,20 @@ impl Group {
   pub fn into_stream(self)-> TokenStream {
     self.stream
   }
+
+  #[inline(always)]
+  pub fn inner_stream(&self)-> TokenStreamRef<'_> {
+    if self.delimiter==Delimiter::Invisible {
+      unimplemented!();
+    }
+
+    assert!(self.stream.len()>=3);
+    let start=1usize;
+    let end=self.stream.len()-1;
+
+    let view=&self.stream.0[start..end];
+    TokenStreamRef::new(view)
+  }
 }
 
 impl Eq for Group {}
@@ -119,6 +138,54 @@ impl Delimiter {
       Self::Brace=> Self::BRACE_BYTES,
       Self::Bracket=> Self::BRACKET_BYTES,
       Self::Invisible=> unimplemented!(),
+    }
+  }
+}
+
+
+impl Debug for Group {
+  fn fmt(&self,f: &mut Formatter<'_>)-> fmt::Result {
+    if !f.alternate() {
+      let mut dbg=f.debug_struct(stringify!(Group));
+
+      dbg.field("delimiter",&self.delimiter);
+      dbg.field("stream",&self.stream);
+      dbg.field("span",&self.span);
+
+      return dbg.finish();
+    }
+
+    // We attempt to match libproc_macro's formatting.
+    // Empty parens: ()
+    // Nonempty parens: (...)
+    // Empty brackets: []
+    // Nonempty brackets: [...]
+    // Empty braces: { }
+    // Nonempty braces: { ... }
+    match self.delimiter {
+      Delimiter::Paren=> {
+        if self.stream.is_empty() {
+          return f.write_str("()");
+        }
+
+        let mut dbg=f.debug_tuple("");
+        for entry in self.inner_stream() {
+          dbg.field(entry);
+        }
+
+        dbg.finish()
+      },
+      Delimiter::Brace=> {
+        f.debug_set()
+        .entries(self.inner_stream())
+        .finish()
+      }
+      Delimiter::Bracket=> {
+        f.debug_list()
+        .entries(self.inner_stream())
+        .finish()
+      }
+      Delimiter::Invisible=> Debug::fmt(&self.stream,f)
     }
   }
 }
