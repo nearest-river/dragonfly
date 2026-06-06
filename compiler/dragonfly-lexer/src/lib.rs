@@ -4,7 +4,6 @@ mod lexer;
 mod token_hint;
 mod lex_tracker;
 
-pub mod span;
 pub mod error;
 pub mod ident;
 pub mod token;
@@ -15,7 +14,6 @@ pub mod lifetime;
 
 pub use crate::{
   token::*,
-  span::Span,
   lexer::Lexer,
 };
 

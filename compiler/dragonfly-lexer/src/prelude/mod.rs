@@ -21,8 +21,8 @@ pub(crate) use crate::{
   },
 };
 
+pub use dragonfly_span::Span;
 pub use crate::{
-  span::*,
   token::*,
   error::Reason,
   comment::CommentKind,
