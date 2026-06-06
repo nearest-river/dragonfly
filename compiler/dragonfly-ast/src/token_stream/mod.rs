@@ -1,6 +1,8 @@
 
 mod view;
 mod iter;
+mod parse;
+pub mod error;
 pub mod group;
 
 use crate::prelude::*;

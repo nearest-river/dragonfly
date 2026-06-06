@@ -7,8 +7,14 @@ pub use crate::token_stream::{
   TokenStream,
   ToTokenStream,
   TokenStreamRef,
+  error::{
+    self,
+    Error,
+    ErrorKind,
+  },
 };
 
+pub(crate) use crate::token_stream::group::*;
 
 
 
