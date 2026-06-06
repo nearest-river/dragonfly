@@ -10,7 +10,7 @@ use std::fmt::{
   Formatter,
 };
 
-
+#[derive(Clone)]
 pub struct Token {
   pub span: Span,
   pub kind: TokenKind,
