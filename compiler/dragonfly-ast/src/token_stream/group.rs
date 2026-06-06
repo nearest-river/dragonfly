@@ -88,7 +88,7 @@ impl Group {
       unimplemented!();
     }
 
-    assert!(self.stream.len()>=3);
+    assert!(self.stream.len()>=2);
     let start=1usize;
     let end=self.stream.len()-1;
 
@@ -164,7 +164,7 @@ impl Debug for Group {
     // Nonempty braces: { ... }
     match self.delimiter {
       Delimiter::Paren=> {
-        if self.stream.is_empty() {
+        if self.inner_stream().is_empty() {
           return f.write_str("()");
         }
 

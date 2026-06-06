@@ -6,6 +6,7 @@ pub mod error;
 pub mod group;
 
 use crate::prelude::*;
+use dragonfly_lexer::Lexer;
 
 use std::{
   sync::Arc,
@@ -55,6 +56,10 @@ impl TokenStream {
   #[inline(always)]
   pub fn new_empty()-> Self {
     Self::new(Vec::new())
+  }
+
+  pub fn parse(buf: &[u8])-> Result<TokenStream,Error> {
+    parse::parse(Lexer::new(buf))
   }
 
   pub fn is_empty(&self)-> bool {

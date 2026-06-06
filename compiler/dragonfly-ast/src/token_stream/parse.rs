@@ -63,9 +63,9 @@ pub(crate) fn parse(mut lexer: Lexer<'_>)-> Result<TokenStream,Error> {
 #[inline]
 const fn get_closing_deli(token: &Token)-> Option<Delimiter> {
   match token.kind {
-    TokenKind::LParen=> Some(Delimiter::Paren),
-    TokenKind::LBrace=> Some(Delimiter::Brace),
-    TokenKind::LBracket=> Some(Delimiter::Bracket),
+    TokenKind::RParen=> Some(Delimiter::Paren),
+    TokenKind::RBrace=> Some(Delimiter::Brace),
+    TokenKind::RBracket=> Some(Delimiter::Bracket),
     _=> None
   }
 }
@@ -73,9 +73,9 @@ const fn get_closing_deli(token: &Token)-> Option<Delimiter> {
 #[inline]
 const fn get_opening_deli(token: &Token)-> Option<Delimiter> {
   match token.kind {
-    TokenKind::RParen=> Some(Delimiter::Paren),
-    TokenKind::RBrace=> Some(Delimiter::Brace),
-    TokenKind::RBracket=> Some(Delimiter::Bracket),
+    TokenKind::LParen=> Some(Delimiter::Paren),
+    TokenKind::LBrace=> Some(Delimiter::Brace),
+    TokenKind::LBracket=> Some(Delimiter::Bracket),
     _=> None
   }
 }
