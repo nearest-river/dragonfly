@@ -16,7 +16,12 @@ pub struct Token {
   pub kind: TokenKind,
 }
 
-
+impl Eq for Token {}
+impl PartialEq<Token> for Token {
+  fn eq(&self,other: &Token)-> bool {
+    self.kind==other.kind
+  }
+}
 
 impl Debug for Token {
   #[inline]
@@ -33,11 +38,6 @@ impl Debug for Token {
     fmt.finish()
   }
 }
-
-
-
-
-
 
 
 
