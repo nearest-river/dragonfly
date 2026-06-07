@@ -140,6 +140,26 @@ impl Delimiter {
       Self::Invisible=> unimplemented!(),
     }
   }
+
+  #[inline(always)]
+  pub const fn opening_char(&self)-> char {
+    self.as_chars().0
+  }
+
+  #[inline(always)]
+  pub const fn opening_byte(&self)-> u8 {
+    self.as_bytes().0
+  }
+
+  #[inline(always)]
+  pub const fn closing_char(&self)-> char {
+    self.as_chars().1
+  }
+
+  #[inline(always)]
+  pub const fn closing_byte(&self)-> u8 {
+    self.as_bytes().1
+  }
 }
 
 

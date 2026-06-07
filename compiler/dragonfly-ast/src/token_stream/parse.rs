@@ -23,10 +23,10 @@ pub(crate) fn parse(mut lexer: Lexer<'_>)-> Result<TokenStream,Error> {
 
     if let Some(deli_close)=get_closing_deli(&token) {
       let (deli_open,mut tree)=match stack.pop() {
-        None=> return Err(Error::new(ErrorKind::UnexpectedClosingDelimiter(deli_close),token.span)),
+        None=> return Err(Error::new(ErrorKind::UnexpectedDelimiter(deli_close.closing_char()),token.span)),
         Some((deli_open,tree)) if deli_open==deli_close=> (deli_open,tree),
         Some(_)=> {
-          let kind=ErrorKind::MismatchedClosingDelimiter(deli_close);
+          let kind=ErrorKind::MismatchedDelimiter(deli_close.closing_char());
           return Err(Error::new(kind,token.span));
         }
       };
@@ -50,9 +50,6 @@ pub(crate) fn parse(mut lexer: Lexer<'_>)-> Result<TokenStream,Error> {
 
   Ok(TokenStream::new(vec))
 }
-
-
-
 
 
 
