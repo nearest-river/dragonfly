@@ -216,6 +216,7 @@ impl Debug for TokenKind {
       Self::Let=> f.write_str(stringify!(Let))?,
       Self::Static=> f.write_str(stringify!(Static))?,
       Self::Enum=> f.write_str(stringify!(Enum))?,
+      Self::Fly=> f.write_str(stringify!(Fly))?,
       Self::Impl=> f.write_str(stringify!(Impl))?,
       Self::Trait=> f.write_str(stringify!(Trait))?,
       Self::Auto=> f.write_str(stringify!(Auto))?,
