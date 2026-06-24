@@ -257,6 +257,7 @@ impl Lexer<'_> {
       b"extern"      => TokenKind::Extern,
       b"false"       => TokenKind::Literal(LiteralKind::Bool),
       b"fn"          => TokenKind::Fn,
+      b"fly"         => TokenKind::Fly,
       b"for"         => TokenKind::For,
       b"goto"        => TokenKind::Goto,
       b"if"          => TokenKind::If,

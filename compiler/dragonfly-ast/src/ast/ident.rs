@@ -3,13 +3,14 @@ use crate::prelude::*;
 
 #[derive(Debug,Clone)]
 pub struct Ident {
-  pub(crate) span: Span,
-  pub(crate) is_raw: bool,
+  pub span: Span,
+  pub is_raw: bool,
 }
 
 
+
 impl Ident {
-  pub(crate) fn new(span: Span,is_raw: bool)-> Self {
+  pub(crate) const fn new(span: Span,is_raw: bool)-> Self {
     Self {
       span,
       is_raw,

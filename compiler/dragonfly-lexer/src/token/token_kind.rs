@@ -86,6 +86,7 @@ pub enum TokenKind {
   As,
   In,
   Fn,
+  Fly,
   Goto,
   Struct,
   Const,
