@@ -4,16 +4,18 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-unicode-ident = "1.0.24"
-unicode-properties = { version = "0.1.4", features = ["emoji"] }
-thiserror = "2.0.17"
-lexical = { version = "7.0.5", features = ["f128", "compact", "f16", "floats", "format", "integers", "lint", "parse", "power-of-two", "radix"] }
-lexical-core = { version = "1.0.6", features = ["f128", "compact", "f16", "floats", "format", "integers", "lint", "parse", "power-of-two", "radix"] }
-lexical-util = { version = "1.0.7", features = ["f128", "compact", "f16", "float16", "parse-floats", "parse-integers", "power-of-two", "radix", "write-floats", "write-integers", "format", "lint"] }
-unicode-id-start = "1.4.0"
-unescape = "0.1.0"
-half = "2.7.1"
-f128 = "0.2.9"
 dragonfly-span = { path = "../dragonfly-span" }
+workspace.thiserror = true
+workspace.unescape = true
+workspace.half = true
+workspace.f128 = true
+workspace.unicode-ident = true
+workspace.unicode-properties = true
+workspace.lexical = true
+workspace.lexical-core = true
+workspace.lexical-util = true
+workspace.unicode-id-start = true
+
+
 
 
