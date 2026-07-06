@@ -5,16 +5,16 @@ edition = "2024"
 
 [dependencies]
 dragonfly-span = { path = "../dragonfly-span" }
-workspace.thiserror = true
-workspace.unescape = true
-workspace.half = true
-workspace.f128 = true
-workspace.unicode-ident = true
-workspace.unicode-properties = true
-workspace.lexical = true
-workspace.lexical-core = true
-workspace.lexical-util = true
-workspace.unicode-id-start = true
+thiserror.workspace = true
+unescape.workspace = true
+half.workspace = true
+f128.workspace = true
+unicode-ident.workspace = true
+unicode-properties.workspace = true
+lexical.workspace = true
+lexical-core.workspace = true
+lexical-util.workspace = true
+unicode-id-start.workspace = true
 
 
 

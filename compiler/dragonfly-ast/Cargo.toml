@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-workspace.thiserror = true
-dragonfly-span = { path = "../dragonfly-span" }
+thiserror.workspace = true
+dragonfly-span = { path = "../dragonfly-span/" }
 dragonfly-lexer = { path = "../dragonfly-lexer/" }
 
 

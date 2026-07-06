@@ -15,10 +15,6 @@ enum Inner {
   DocBlock(BStack),
 }
 
-#[repr(transparent)]
-pub(crate) struct BStack(u128);
-
-
 impl CommentLexTracker {
   fn new(inner: Inner)-> Self {
     let len=inner.prefix_len();
@@ -108,6 +104,8 @@ impl Inner {
 }
 
 
+#[repr(transparent)]
+pub(crate) struct BStack(u128);
 
 impl BStack {
   #[inline(always)]
