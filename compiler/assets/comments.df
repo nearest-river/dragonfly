@@ -1,0 +1,191 @@
+/***********************************************************************
+ * File: assets/comments.df
+ * Purpose: Stress-test comment parsing.
+ ***********************************************************************/
+
+// Single-line comment.
+
+/* Simple block comment. */
+
+/** Documentation block comment.
+ *  @author John Doe
+ *  @version 1.0
+ *  @param x Some parameter
+ *  @return Nothing
+ */
+
+/// Documentation line comment.
+/// Multiple lines.
+/// More docs.
+
+//////////////////////////////////////////////////////////////
+// Separator comment
+//////////////////////////////////////////////////////////////
+
+/*
+    Outer block comment begins.
+
+    // Single-line comment inside a block comment.
+
+    /*
+        Nested block comment.
+
+        /*
+            Deeply nested block comment.
+        */
+
+        End of second level.
+    */
+
+    Back to outer block.
+*/
+
+/* Empty block follows. */
+ /**/
+
+/**********************
+ * ASCII art
+ **********************
+ *   /\_/\\
+ *  ( o.o )
+ *   > ^ <
+ **********************/
+
+/*
+TODO:
+ - Implement lexer.
+ - Implement parser.
+ - Write tests.
+*/
+
+/*
+FIXME:
+ - Nested comment bug.
+ - Unicode handling.
+ - EOF edge case.
+*/
+
+/*
+NOTE:
+This comment intentionally contains many symbols.
+
+{}[]()<>
++-*/%=&|^~!
+"quotes"
+'apostrophes'
+`backticks`
+*/
+
+/*
+URLs:
+https://example.com
+https://github.com
+*/
+
+/*
+Email:
+someone@example.com
+*/
+
+/*
+Numbers:
+123
+0xDEADBEEF
+0b101010
+3.14159265
+1e-9
+*/
+
+/*
+Pretend code:
+
+if (a == b) {
+    return true;
+}
+
+while (x--) {
+    foo();
+}
+*/
+
+/*
+Commented-out code:
+
+int x = 10;
+printf("%d\n", x);
+
+*/
+
+/*
+Strings that LOOK like comments:
+
+"// not a comment"
+"/* not a comment */"
+"/// doc"
+"/** docs */"
+*/
+
+/*
+Character literals:
+
+'/'
+'*'
+'"'
+'\n'
+*/
+
+/*
+Special characters:
+
+α β γ δ
+日本語
+русский
+😀 🚀 🔥
+*/
+
+/*----------------------------------------------------------*/
+/*-------------------- Divider -----------------------------*/
+/*----------------------------------------------------------*/
+
+/*
+Lorem ipsum dolor sit amet,
+consectetur adipiscing elit,
+sed do eiusmod tempor incididunt.
+*/
+
+/*
+Level 1
+    /*
+    Level 2
+        /*
+        Level 3
+            /*
+            Level 4
+                /*
+                Level 5
+                */
+            */
+        */
+    */
+*/
+
+/*
+Mixed indentation:
+
+    line 1
+  line 2
+        line 3
+ line 4
+*/
+
+/*
+Trailing stars
+**************
+**************
+**************
+*/
+
+/*
+End-of-file test comment.
+No newline after this comment.
+*/
