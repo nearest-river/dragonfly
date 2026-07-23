@@ -1,7 +1,7 @@
 
-mod const_math;
+#[macro_use]
+mod macros;
 
-use const_math as math;
 
 use std::{
   ops::Range,
@@ -45,8 +45,8 @@ impl Span {
   #[inline(always)]
   pub const fn join(&self,other: Span)-> Span {
     Span {
-      lo: math::min(self.lo,other.lo),
-      hi: math::max(self.hi,other.hi),
+      lo: min!(self.lo,other.lo),
+      hi: max!(self.hi,other.hi),
     }
   }
 
@@ -56,7 +56,7 @@ impl Span {
 
     Span {
       lo,
-      hi: math::min(lo.saturating_add(1),hi),
+      hi: min!(lo.saturating_add(1),hi),
     }
   }
 
@@ -65,7 +65,7 @@ impl Span {
     let Span { lo, hi }=*self;
 
     Span {
-      lo: math::max(hi.saturating_sub(1),lo),
+      lo: max!(hi.saturating_sub(1),lo),
       hi,
     }
   }
