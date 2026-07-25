@@ -15,7 +15,7 @@ use syn::{
 struct NewType(TokenStream);
 
 #[proc_macro]
-pub fn new_type(input: TokenStream)-> TokenStream {
+pub fn newtype_index(input: TokenStream)-> TokenStream {
   let input=parse_macro_input!(input as NewType);
   input.0.into()
 }
