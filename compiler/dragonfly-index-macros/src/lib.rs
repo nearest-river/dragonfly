@@ -234,6 +234,7 @@ impl Parse for NewType {
       #step_impl
       #stable_hash_impl
       #debug_impl
+      #ops_impl
 
 
     };
