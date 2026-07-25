@@ -106,7 +106,7 @@ impl Parse for NewType {
     let step_impl=ord.then(|| step_impl(&name));
     let derive_ord=ord.then_some(quote! { #[derive(PartialOrd,Ord)] });
 
-    let stable_hash_impl=stable_hash_impl(&name);
+    let stable_hash_impl=stable_hash.then(|| stable_hash_impl(&name));
     let debug_impl=debug_impl(&name,debug_format);
     let ops_impl=ops_impl(&name);
 
