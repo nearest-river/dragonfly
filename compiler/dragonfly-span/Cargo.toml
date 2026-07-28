@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+dragonfly-stable-hash = { path = "../dragonfly-stable-hash/" }
+dragonfly-index = { path = "../dragonfly-index/" }
+itoa.workspace = true
+

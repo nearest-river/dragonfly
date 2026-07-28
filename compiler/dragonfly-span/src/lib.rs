@@ -1,6 +1,18 @@
+#![allow(internal_features)]
+#![feature(step_trait,rustc_attrs)]
 
 #[macro_use]
 mod macros;
+
+mod ident;
+mod symbol;
+
+pub use ident::Ident;
+pub use symbol::{
+  sym,
+  Symbol,
+};
+
 
 
 use std::{
@@ -118,5 +130,9 @@ impl Display for Span {
     write!(f,"{:#?}",self)
   }
 }
+
+
+
+
 
 
