@@ -1,6 +1,8 @@
 #![allow(incomplete_features)]
 #![feature(never_type,specialization,negative_impls)]
 
+#[cfg(test)]
+mod tests;
 
 mod hash;
 
