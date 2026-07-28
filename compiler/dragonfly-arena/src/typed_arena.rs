@@ -22,7 +22,7 @@ pub struct TypedArena<T> {
   /// reached, a new chunk is allocated.
   end: Cell<*mut T>,
   /// A vector of arena chunks.
-  chunks: RefCell<Vec<ArenaChunk<T>>>,
+  pub(crate) chunks: RefCell<Vec<ArenaChunk<T>>>,
   /// Marker indicating that dropping the arena causes its owned
   /// instances of `T` to be dropped.
   _own: PhantomData<T>,
@@ -150,7 +150,7 @@ impl<T> TypedArena<T> {
   }
 
   /// Drops the contents of the last chunk. The last chunk is partially empty, unlike all other chunks.
-  fn clear_last_chunk(&self,last_chunk: &mut ArenaChunk<T>) {
+  pub(crate) fn clear_last_chunk(&self,last_chunk: &mut ArenaChunk<T>) {
     let start=last_chunk.start().addr();
     let end=self.ptr.get().addr();
 
@@ -184,6 +184,20 @@ unsafe impl<#[may_dangle] T> Drop for TypedArena<T> {
 }
 
 unsafe impl<T: Send> Send for TypedArena<T> {}
+
+impl<T> Default for TypedArena<T> {
+  /// Creates a new `TypedArena`.
+  fn default()-> TypedArena<T> {
+    TypedArena {
+      // We set both `ptr` and `end` to 0 so that the first call to
+      // alloc() will trigger a grow().
+      ptr: Cell::new(ptr::null_mut()),
+      end: Cell::new(ptr::null_mut()),
+      chunks: Default::default(),
+      _own: PhantomData,
+    }
+  }
+}
 
 
 

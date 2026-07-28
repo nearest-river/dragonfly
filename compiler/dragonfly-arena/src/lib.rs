@@ -1,10 +1,12 @@
-#![feature(dropck_eyepatch)]
+#![feature(dropck_eyepatch,test)]
 
 mod chunk;
 pub mod marker;
 mod typed_arena;
 mod dropless_arena;
 
+#[cfg(test)]
+mod tests;
 
 pub use typed_arena::TypedArena;
 pub use dropless_arena::DroplessArena;
