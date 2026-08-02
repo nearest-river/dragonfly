@@ -17,6 +17,7 @@ use std::{
   },
 };
 
+#[rustc_pass_by_value]
 #[derive(Clone,Copy,StableHash)]
 pub struct Span {
   idx: u32,
@@ -129,6 +130,21 @@ impl Span {
     }
   }
 }
+
+
+impl Span {
+    
+}
+
+
+
+
+
+
+
+
+
+
 
 
 impl Len {

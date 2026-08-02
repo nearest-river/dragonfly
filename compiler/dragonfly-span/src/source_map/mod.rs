@@ -55,7 +55,7 @@ impl SourceMap {
   pub fn insert_source(&self,src: Source)-> SourceId {
     let mut source_map=self.source_map.write()
     .expect("failed to write to source map");
-    let src_id=SourceId::from_usize(source_map.len());
+    let src_id=SourceId::from_idx(source_map.len());
 
     // this should never fail since src_id is always <= 0x7fff
     source_map.push(src);
@@ -129,15 +129,14 @@ impl Source {
 
 
 impl SourceId {
-  const DUMMY_VAL: u16=0xffff;
-  const MAX_VAL: u16=Self::DUMMY_VAL-1;
-  pub const MAX: Self=Self(Self::MAX_VAL);
-  pub const DUMMY: Self=Self(Self::DUMMY_VAL);
+  pub const DUMMY: Self=Self(0);
+  const THREASHOLD: u16=0xffff;
+  pub const MAX: Self=Self(Self::THREASHOLD-1);
 
   #[inline]
-  const fn from_usize(id: usize)-> Self {
-    assert!(id<=Self::MAX_VAL as usize);
-    Self(id as u16)
+  const fn from_idx(id: usize)-> Self {
+    assert!(id<Self::THREASHOLD as usize);
+    Self(id as u16 + 1)
   }
 
   #[inline(always)]
@@ -151,9 +150,9 @@ impl SourceId {
   }
 
   #[inline]
-  pub const fn as_usize(self)-> usize {
-    assert!(!self.is_dummy());
-    self.0 as usize
+  pub const fn as_idx(self)-> usize {
+    assert!(!self.is_dummy(),"invalid source id");
+    self.0 as usize - 1
   }
 }
 

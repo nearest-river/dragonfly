@@ -25,9 +25,8 @@ pub struct SourceMapWriteGuard<'a>(pub(crate) RwLockWriteGuard<'a,Vec<Source>>);
 
 impl SourceMapReadGuard<'_> {
   #[inline(always)]
-  pub fn get(&self,idx: SourceId)-> Option<&Source> {
-    assert_ne!(idx,SourceId::DUMMY,"invalid source id");
-    self.0.get(idx.as_usize())
+  pub fn get(&self,src_id: SourceId)-> Option<&Source> {
+    self.0.get(src_id.as_idx())
   }
 
   #[inline(always)]
@@ -44,12 +43,12 @@ impl SourceMapReadGuard<'_> {
 impl SourceMapWriteGuard<'_> {
   #[inline(always)]
   pub fn get(&self,idx: SourceId)-> Option<&Source> {
-    self.0.get(idx.as_usize())
+    self.0.get(idx.as_idx())
   }
 
   #[inline(always)]
   pub fn get_mut(&mut self,idx: SourceId)-> Option<&mut Source> {
-    self.0.get_mut(idx.as_usize())
+    self.0.get_mut(idx.as_idx())
   }
 
   #[inline(always)]
