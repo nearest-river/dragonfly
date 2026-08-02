@@ -1,6 +1,7 @@
 
 
 use dragonfly_stable_hash::StableHash;
+use dragonfly_data_structures::monotonic::MonotonicVec;
 
 use std::{
   cmp::Ordering,
@@ -30,8 +31,8 @@ pub struct SourceMap {
 
 pub struct Source {
   #[allow(unused)]
-  pub(crate) buf: String,
-  pub(crate) overflowing_len_map: Vec<u32>,
+  pub(crate) buf: Vec<u8>,
+  pub(crate) overflowing_len_map: MonotonicVec<u32>,
 }
 
 #[derive(Clone,Copy,Hash,StableHash)]
@@ -99,10 +100,10 @@ impl const IndexMut<SourceId> for SourceMap {
 
 impl Source {
   #[inline(always)]
-  pub const fn new(buf: String)-> Self {
+  pub const fn new(buf: Vec<u8>)-> Self {
     Self {
       buf,
-      overflowing_len_map: vec![],
+      overflowing_len_map: MonotonicVec::new(),
     }
   }
 
