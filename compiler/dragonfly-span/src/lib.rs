@@ -20,14 +20,35 @@ pub use symbol::{
 
 
 pub struct SessionGlobals {
-  pub source_map: SourceMap,
+  source_map: SourceMap,
 }
 
+static SESSION_GLOBALS: SessionGlobals=SessionGlobals {
+  source_map: SourceMap::new()
+};
 
+#[inline(always)]
+pub const fn source_map<'a>()-> &'a SourceMap {
+  &SESSION_GLOBALS.source_map
+}
 
+#[inline(always)]
+pub fn with_source<T: Sized>(source_id: SourceId,f: impl FnOnce(&Source)-> T)-> T {
+  let source_map=SESSION_GLOBALS.source_map
+  .read()
+  .expect("failed to read source map");
 
+  f(&source_map[source_id])
+}
 
+#[inline(always)]
+pub fn with_source_mut<T: Sized>(source_id: SourceId,f: impl FnOnce(&mut Source)-> T)-> T {
+  let mut source_map=SESSION_GLOBALS.source_map
+  .write()
+  .expect("failed to write source map");
 
+  f(&mut source_map[source_id])
+}
 
 
 
