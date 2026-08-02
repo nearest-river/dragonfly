@@ -1,22 +1,16 @@
 
-mod guard;
 
 use dragonfly_stable_hash::StableHash;
-pub use guard::{
-  SourceMapReadGuard,
-  SourceMapWriteGuard,
-};
 
 use std::{
   cmp::Ordering,
+  ops::{
+    Index,
+    IndexMut,
+  },
   marker::{
     PhantomData,
     StructuralPartialEq,
-  },
-  sync::{
-    RwLock,
-    PoisonError,
-    TryLockError,
   },
   fmt::{
     self,
@@ -30,8 +24,8 @@ use std::{
 
 
 pub struct SourceMap {
-  source_map: RwLock<Vec<Source>>,
-  _marker: PhantomData<SourceId>,
+  source_map: Vec<Source>,
+  _marker: PhantomData<Vec<(SourceId,Source)>>,
 }
 
 pub struct Source {
@@ -51,52 +45,53 @@ impl SourceMap {
   #[inline]
   pub const fn new()-> Self {
     Self {
-      source_map: RwLock::new(Vec::new()),
+      source_map: Vec::new(),
       _marker: PhantomData,
     }
   }
 
+  #[inline(always)]
+  pub const fn get(&self,src_id: SourceId)-> Option<&Source> {
+    self.source_map.get(src_id.as_idx())
+  }
+
+  #[inline(always)]
+  pub const fn get_mut(&mut self,src_id: SourceId)-> Option<&mut Source> {
+    self.source_map.get_mut(src_id.as_idx())
+  }
+
+  #[inline(always)]
+  pub fn len(&self)-> usize {
+    self.source_map.len()
+  }
+
+  #[inline(always)]
+  pub fn capacity(&self)-> usize {
+    self.source_map.capacity()
+  }
+
   #[inline]
-  pub fn insert_source(&self,src: Source)-> SourceId {
-    let mut source_map=self.source_map.write()
-    .expect("failed to write to source map");
-    let src_id=SourceId::from_idx(source_map.len());
+  pub fn insert_source(&mut self,src: Source)-> SourceId {
+    let src_id=SourceId::from_idx(self.source_map.len());
 
     // this should never fail since src_id is always <= 0x7fff
-    source_map.push(src);
+    self.source_map.push(src);
     src_id
   }
+}
 
-  #[inline(always)]
-  pub fn read(&self)-> Result<SourceMapReadGuard<'_>,PoisonError<SourceMapReadGuard<'_>>> {
-    match self.source_map.read() {
-      Ok(guard)=> Ok(SourceMapReadGuard(guard)),
-      Err(err)=> Err(guard::convert_poison_err(err))
-    }
+impl const Index<SourceId> for SourceMap {
+  type Output=Source;
+  #[inline]
+  fn index(&self,src_id: SourceId)-> &Self::Output {
+    &self.source_map[src_id.as_idx()]
   }
+}
 
-  #[inline(always)]
-  pub fn write(&self)-> Result<SourceMapWriteGuard<'_>,PoisonError<SourceMapWriteGuard<'_>>> {
-    match self.source_map.write() {
-      Ok(guard)=> Ok(SourceMapWriteGuard(guard)),
-      Err(err)=> Err(guard::convert_poison_err(err)),
-    }
-  }
-
-  #[inline(always)]
-  pub fn try_read(&self)-> Result<SourceMapReadGuard<'_>,TryLockError<SourceMapReadGuard<'_>>> {
-    match self.source_map.try_read() {
-      Ok(guard)=> Ok(SourceMapReadGuard(guard)),
-      Err(err)=> Err(guard::convert_try_lock_err(err))
-    }
-  }
-
-  #[inline(always)]
-  pub fn try_write(&self)-> Result<SourceMapWriteGuard<'_>,TryLockError<SourceMapWriteGuard<'_>>> {
-    match self.source_map.try_write() {
-      Ok(guard)=> Ok(SourceMapWriteGuard(guard)),
-      Err(err)=> Err(guard::convert_try_lock_err(err))
-    }
+impl const IndexMut<SourceId> for SourceMap {
+  #[inline]
+  fn index_mut(&mut self,src_id: SourceId)-> &mut Self::Output {
+    &mut self.source_map[src_id.as_idx()]
   }
 }
 
@@ -127,9 +122,6 @@ impl Source {
     len_id
   }
 }
-
-
-
 
 
 

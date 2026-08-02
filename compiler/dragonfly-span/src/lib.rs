@@ -1,5 +1,6 @@
 #![allow(internal_features)]
-#![feature(step_trait,rustc_attrs,const_cmp,const_trait_impl,structural_match)]
+#![feature(rustc_attrs)]
+#![feature(step_trait,const_trait_impl,structural_match,const_index,const_convert,const_cmp)]
 
 #[macro_use]
 mod macros;
@@ -17,20 +18,17 @@ pub use symbol::{
   Symbol,
 };
 
+use std::sync::RwLock;
 
 
 pub struct SessionGlobals {
-  source_map: SourceMap,
+  pub source_map: RwLock<SourceMap>,
 }
 
 static SESSION_GLOBALS: SessionGlobals=SessionGlobals {
-  source_map: SourceMap::new()
+  source_map: RwLock::new(SourceMap::new())
 };
 
-#[inline(always)]
-pub const fn source_map<'a>()-> &'a SourceMap {
-  &SESSION_GLOBALS.source_map
-}
 
 #[inline(always)]
 pub fn with_source<T: Sized>(source_id: SourceId,f: impl FnOnce(&Source)-> T)-> T {
