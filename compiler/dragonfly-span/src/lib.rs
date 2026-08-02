@@ -22,7 +22,7 @@ use std::sync::RwLock;
 
 
 pub struct SessionGlobals {
-  pub source_map: RwLock<SourceMap>,
+  source_map: RwLock<SourceMap>,
 }
 
 static SESSION_GLOBALS: SessionGlobals=SessionGlobals {
@@ -30,22 +30,35 @@ static SESSION_GLOBALS: SessionGlobals=SessionGlobals {
 };
 
 
+impl SessionGlobals {
+  #[inline(always)]
+  pub fn with<T>(&self,f: impl FnOnce(&SessionGlobals)-> T)-> T {
+    f(&self)
+  }
+}
+
+
 #[inline(always)]
-pub fn with_source<T: Sized>(source_id: SourceId,f: impl FnOnce(&Source)-> T)-> T {
+pub fn with_session_globals<T>(f: impl FnOnce(&SessionGlobals)-> T)-> T {
+  SESSION_GLOBALS.with(f)
+}
+
+#[inline(always)]
+pub fn with_source_map<T: Sized>(f: impl FnOnce(&SourceMap)-> T)-> T {
   let source_map=SESSION_GLOBALS.source_map
   .read()
   .expect("failed to read source map");
 
-  f(&source_map[source_id])
+  f(&source_map)
 }
 
 #[inline(always)]
-pub fn with_source_mut<T: Sized>(source_id: SourceId,f: impl FnOnce(&mut Source)-> T)-> T {
+pub fn with_source_map_mut<T: Sized>(f: impl FnOnce(&mut SourceMap)-> T)-> T {
   let mut source_map=SESSION_GLOBALS.source_map
   .write()
   .expect("failed to write source map");
 
-  f(&mut source_map[source_id])
+  f(&mut source_map)
 }
 
 

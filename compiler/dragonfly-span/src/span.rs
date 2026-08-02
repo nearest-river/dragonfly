@@ -83,8 +83,8 @@ impl Span {
       self.len.as_usize()
     } else {
       hint::cold_path();
-      let len=crate::with_source(self.source_id,|src| {
-        src.get_overflowing_len(self.len.as_len_id())
+      let len=crate::with_source_map(|source_map| {
+        source_map[self.source_id].get_overflowing_len(self.len.as_len_id())
       });
 
       len as usize 
@@ -116,7 +116,9 @@ impl Span {
     assert!(self.source_id==other.source_id);
     let source_id=self.source_id;
 
-    crate::with_source_mut(source_id,|src| {
+    crate::with_source_map_mut(|source_map| {
+      let src=&mut source_map[source_id];
+
       let idx=cmp::min(self.idx,other.idx);
       let len=cmp::max(self.len.load(src),other.len.load(src));
       let len_id=src.insert_oveflowing_len(len);
