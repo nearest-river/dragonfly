@@ -15,10 +15,15 @@ use std::{
     self,
     Ordering,
   },
+  fmt::{
+    self,
+    Debug,
+    Formatter,
+  },
 };
 
 #[rustc_pass_by_value]
-#[derive(Clone,Copy,StableHash)]
+#[derive(Clone,Copy,StableHash,PartialEq,Eq)]
 pub struct Span {
   idx: u32,
   len: Len,
@@ -132,19 +137,21 @@ impl Span {
 }
 
 
-impl Span {
-    
+impl Debug for Span {
+  #[inline]
+  fn fmt(&self,f: &mut Formatter<'_>)-> fmt::Result {
+    let alternate=f.alternate();
+    let mut fmt=f.debug_tuple(stringify!(Span));
+
+    fmt.field(&self.idx);
+    fmt.field(&self.len);
+    if !alternate {
+      fmt.field(&self.source_id);
+    }
+
+    fmt.finish()
+  }
 }
-
-
-
-
-
-
-
-
-
-
 
 
 impl Len {
@@ -237,9 +244,15 @@ impl const PartialEq for Len {
 impl const Eq for Len {}
 impl StructuralPartialEq for Len {}
 
-
-
-
-
+impl Debug for Len {
+  #[inline]
+  fn fmt(&self,f: &mut Formatter<'_>)-> fmt::Result {
+    match *self {
+      len if len.is_overflowing()=> write!(f,"<overflown>"),
+      Self::DUMMY if f.alternate()=> write!(f,"<dummy>"),
+      _=> write!(f,"{}",self.0),
+    }
+  }
+}
 
 

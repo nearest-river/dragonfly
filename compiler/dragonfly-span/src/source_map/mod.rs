@@ -18,6 +18,11 @@ use std::{
     PoisonError,
     TryLockError,
   },
+  fmt::{
+    self,
+    Debug,
+    Formatter,
+  },
 };
 
 
@@ -35,10 +40,10 @@ pub struct Source {
   pub(crate) overflowing_len_map: Vec<u32>,
 }
 
-#[derive(Clone,Copy,Hash,StableHash,Debug)]
+#[derive(Clone,Copy,Hash,StableHash)]
 pub struct SourceId(pub(crate) u16);
 
-#[derive(Clone,Copy,Hash,StableHash,Debug)]
+#[derive(Clone,Copy,Hash,StableHash)]
 pub struct LenId(u16);
 
 
@@ -179,6 +184,20 @@ impl const PartialEq for SourceId {
 
 impl const Eq for SourceId {}
 impl StructuralPartialEq for SourceId {}
+
+impl Debug for SourceId {
+  #[inline]
+  fn fmt(&self,f: &mut Formatter<'_>)-> fmt::Result {
+    let mut fmt=f.debug_tuple(stringify!(SourceId));
+
+    match *self {
+      Self::DUMMY=> fmt.field(&"<dummy>"),
+      Self(id)=> fmt.field(&id),
+    };
+
+    fmt.finish()
+  }
+}
 
 
 
