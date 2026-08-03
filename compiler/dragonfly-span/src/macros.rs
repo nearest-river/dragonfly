@@ -1,4 +1,4 @@
-
+#![allow(unused_macros)]
 
 
 macro_rules! impl_pos {

@@ -1,9 +1,11 @@
 
 
+use crate::Span;
 use dragonfly_stable_hash::StableHash;
 use dragonfly_data_structures::monotonic::MonotonicVec;
 
 use std::{
+  hint,
   cmp::Ordering,
   ops::{
     Index,
@@ -36,7 +38,7 @@ pub struct Source {
 }
 
 #[derive(Clone,Copy,Hash,StableHash)]
-pub struct SourceId(pub(crate) u16);
+pub struct SourceId(u16);
 
 #[derive(Clone,Copy,Hash,StableHash)]
 pub struct LenId(u16);
@@ -54,6 +56,22 @@ impl SourceMap {
   #[inline(always)]
   pub const fn get(&self,src_id: SourceId)-> Option<&Source> {
     self.source_map.get(src_id.as_idx())
+  }
+
+  #[inline]
+  /// SAFETY: the caller must assure `src_id` is not a dummy id.
+  pub const unsafe fn get_unchecked(&self,src_id: SourceId)-> &Source {
+    unsafe {
+      self.source_map.get_unchecked(src_id.as_idx_unchecked())
+    }
+  }
+
+  #[inline]
+  /// SAFETY: the caller must assure `src_id` is not a dummy id.
+  pub const unsafe fn get_unchecked_mut(&mut self,src_id: SourceId)-> &mut Source {
+    unsafe {
+      self.source_map.get_unchecked_mut(src_id.as_idx_unchecked())
+    }
   }
 
   #[inline(always)]
@@ -78,6 +96,31 @@ impl SourceMap {
     // this should never fail since src_id is always <= 0x7fff
     self.source_map.push(src);
     src_id
+  }
+
+  #[inline]
+  // TODO(nate): add chars based indexing.
+  pub fn get_bytes(&'_ self,span: Span)-> &'_ [u8] {
+    let Span { idx, len, source_id }=span;
+    if span.is_partially_dummy() {
+      return &[];
+    }
+
+    // SAFETY: `Span::is_partially_dummy()` ensures that neither of `len` and `source_id` is dummy.
+    unsafe {
+      let source=self.get_unchecked(source_id);
+      let len=if len.is_inline() {
+        len.as_inline_len_unchecked() as usize
+      } else {
+        hint::cold_path();
+        len.load_outline_unchecked(source) as usize
+      };
+
+      let start=idx as usize;
+      let end=start + len;
+
+      &source.buf[start..end]
+    }
   }
 }
 
@@ -150,6 +193,13 @@ impl SourceId {
   #[inline]
   pub const fn as_idx(self)-> usize {
     assert!(!self.is_dummy(),"invalid source id");
+    unsafe {
+      self.as_idx_unchecked()
+    }
+  }
+
+  #[inline(always)]
+  pub const unsafe fn as_idx_unchecked(self)-> usize {
     self.0 as usize - 1
   }
 }
@@ -200,6 +250,13 @@ impl LenId {
   #[inline]
   pub(crate) const fn new(len_id: u16)-> Self {
     assert!(len_id<=Self::MAX_VAL);
+    unsafe {
+      Self::new_unchecked(len_id)
+    }
+  }
+
+  #[inline(always)]
+  const unsafe fn new_unchecked(len_id: u16)-> Self {
     Self(len_id)
   }
 

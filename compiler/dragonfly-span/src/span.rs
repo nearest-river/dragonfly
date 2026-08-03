@@ -23,16 +23,16 @@ use std::{
 };
 
 #[rustc_pass_by_value]
-#[derive(Clone,Copy,StableHash,PartialEq,Eq)]
+#[derive(Clone,Copy,StableHash)]
 pub struct Span {
-  idx: u32,
-  len: Len,
-  source_id: SourceId,
+  pub(crate) idx: u32,
+  pub(crate) len: Len,
+  pub(crate) source_id: SourceId,
 }
 
 #[derive(Clone,Copy,Hash,StableHash)]
 #[repr(transparent)]
-struct Len(u16);
+pub(crate) struct Len(u16);
 
 
 impl Span {
@@ -68,7 +68,12 @@ impl Span {
 
   #[inline(always)]
   pub const fn is_dummy(self)-> bool {
-    self.idx==0 && self.len.is_dummy() && self.source_id.is_dummy()
+    self==Self::DUMMY
+  }
+
+  #[inline(always)]
+  pub const fn is_partially_dummy(self)-> bool {
+    self.len.is_dummy() || self.source_id.is_dummy()
   }
 
   #[inline(always)]
@@ -120,11 +125,12 @@ impl Span {
       return unsafe { self.join_inline_unchecked(other) };
     }
     hint::cold_path();
-    assert!(self.source_id==other.source_id);
     let source_id=self.source_id;
+    assert!(source_id==other.source_id && !source_id.is_dummy());
 
     crate::with_source_map_mut(|source_map| {
-      let src=&mut source_map[source_id];
+      // SAFETY: trust me bro.
+      let src=unsafe { source_map.get_unchecked_mut(source_id) };
 
       let idx=cmp::min(self.idx,other.idx);
       let len=cmp::max(self.len.load(src),other.len.load(src));
@@ -132,6 +138,15 @@ impl Span {
 
       Span::overflowing(idx,len_id,source_id)
     })
+  }
+}
+
+impl const Eq for Span {}
+impl StructuralPartialEq for Span {}
+impl const PartialEq for Span {
+  #[inline(always)]
+  fn eq(&self,other: &Self)-> bool {
+    self.idx==other.idx && self.len==other.len && self.source_id==other.source_id
   }
 }
 
@@ -153,13 +168,15 @@ impl Debug for Span {
 }
 
 
+
+
 impl Len {
   pub const DUMMY: Self=Len(0);
   const MAX_VAL: u16=u16::MAX >> 1;
   const OVERFLOW_MASK: u16=!Self::MAX_VAL;
 
   #[inline(always)]
-  const fn new(len: u16)-> Self {
+  pub(crate) const fn new(len: u16)-> Self {
     assert!(len<=Self::MAX_VAL);
     unsafe {
       Self::new_unchecked(len)
@@ -167,12 +184,12 @@ impl Len {
   }
 
   #[inline(always)]
-  const unsafe fn new_unchecked(len: u16)-> Self {
+  pub(crate) const unsafe fn new_unchecked(len: u16)-> Self {
     Self(len)
   }
 
   #[inline(always)]
-  const fn from_id(len_id: LenId)-> Self {
+  pub(crate) const fn from_id(len_id: LenId)-> Self {
     // SAFETY(nate): construction of LenId is always safe
     unsafe {
       Self::new_unchecked(Self::OVERFLOW_MASK|len_id.as_u16())
@@ -180,28 +197,28 @@ impl Len {
   }
 
   #[inline(always)]
-  const fn is_dummy(self)-> bool {
+  pub(crate) const fn is_dummy(self)-> bool {
     Self::DUMMY==self
   }
 
   #[inline(always)]
-  const fn is_overflowing(self)-> bool {
+  pub(crate) const fn is_overflowing(self)-> bool {
     self.0 & Self::OVERFLOW_MASK != 0
   }
 
   #[inline(always)]
-  const fn is_inline(self)-> bool {
+  pub(crate) const fn is_inline(self)-> bool {
     !self.is_overflowing()
   }
 
   #[inline]
   /// SAFETY: the caller must hold that `self` is an inline `Len`.
-  const unsafe fn as_inline_len_unchecked(self)-> u16 {
+  pub(crate) const unsafe fn as_inline_len_unchecked(self)-> u16 {
     self.0 as u16
   }
 
   #[inline]
-  const fn as_len_id(self)-> LenId {
+  pub(crate) const fn as_len_id(self)-> LenId {
     assert!(self.is_overflowing());
     unsafe {
       self.as_len_id_unchecked()
@@ -209,7 +226,7 @@ impl Len {
   }
 
   /// SAFETY: the caller must hold that `self` is a overflowing `Len`.
-  const unsafe fn as_len_id_unchecked(self)-> LenId {
+  pub(crate) const unsafe fn as_len_id_unchecked(self)-> LenId {
     LenId::new(self.0 & !Self::OVERFLOW_MASK)
   }
 
