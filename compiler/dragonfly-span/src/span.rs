@@ -77,10 +77,15 @@ impl Span {
   }
 
   #[inline(always)]
+  pub const fn is_inline(self)-> bool {
+    self.len.is_inline()
+  }
+
+  #[inline(always)]
   pub fn byte_range(self)-> Range<usize> {
     let start=self.idx as usize;
-    let len=if self.len.is_overflowing() {
-      self.len.as_usize()
+    let len=if self.len.is_inline() {
+      unsafe { self.len.as_inline_len_unchecked() as usize }
     } else {
       hint::cold_path();
       let len=crate::with_source_map(|source_map| {
@@ -95,11 +100,9 @@ impl Span {
     start..end
   }
 
-  #[inline(always)]
-  pub const fn join_non_overflowing(self,other: Span)-> Span {
-    assert!(self.source_id==other.source_id);
-    debug_assert!(!self.is_overflowing() && !other.is_overflowing());
-
+  #[inline]
+  /// SAFETY: the caller must hold that both `self` and `other` are inline.
+  pub const unsafe fn join_inline_unchecked(self,other: Span)-> Span {
     let idx=cmp::min(self.idx,other.idx);
     let len=cmp::max(self.len,other.len);
     let source_id=self.source_id;
@@ -111,8 +114,12 @@ impl Span {
     }
   }
 
-  #[inline]
-  pub fn join_overflowing(self,other: Span)-> Span {
+  #[inline(always)]
+  pub fn join(self,other: Span)-> Span {
+    if !self.is_inline() {
+      return unsafe { self.join_inline_unchecked(other) };
+    }
+    hint::cold_path();
     assert!(self.source_id==other.source_id);
     let source_id=self.source_id;
 
@@ -125,16 +132,6 @@ impl Span {
 
       Span::overflowing(idx,len_id,source_id)
     })
-  }
-
-  #[inline]
-  pub fn join(self,other: Span)-> Span {
-    if !self.is_overflowing() {
-      self.join_non_overflowing(other)
-    } else {
-      hint::cold_path();
-      self.join_overflowing(other)
-    }
   }
 }
 
@@ -164,13 +161,22 @@ impl Len {
   #[inline(always)]
   const fn new(len: u16)-> Self {
     assert!(len<=Self::MAX_VAL);
+    unsafe {
+      Self::new_unchecked(len)
+    }
+  }
+
+  #[inline(always)]
+  const unsafe fn new_unchecked(len: u16)-> Self {
     Self(len)
   }
 
   #[inline(always)]
   const fn from_id(len_id: LenId)-> Self {
     // SAFETY(nate): construction of LenId is always safe
-    Self(Self::OVERFLOW_MASK|len_id.as_u16())
+    unsafe {
+      Self::new_unchecked(Self::OVERFLOW_MASK|len_id.as_u16())
+    }
   }
 
   #[inline(always)]
@@ -188,35 +194,41 @@ impl Len {
     !self.is_overflowing()
   }
 
-  #[inline(always)]
-  const fn as_u16(self)-> u16 {
-    assert!(self.is_inline());
+  #[inline]
+  /// SAFETY: the caller must hold that `self` is an inline `Len`.
+  const unsafe fn as_inline_len_unchecked(self)-> u16 {
     self.0 as u16
-  }
-
-  #[inline(always)]
-  const fn as_u32(self)-> u32 {
-    self.as_u16() as _
-  }
-
-  #[inline(always)]
-  const fn as_usize(self)-> usize {
-    self.as_u16() as usize
   }
 
   #[inline]
   const fn as_len_id(self)-> LenId {
     assert!(self.is_overflowing());
+    unsafe {
+      self.as_len_id_unchecked()
+    }
+  }
+
+  /// SAFETY: the caller must hold that `self` is a overflowing `Len`.
+  const unsafe fn as_len_id_unchecked(self)-> LenId {
     LenId::new(self.0 & !Self::OVERFLOW_MASK)
   }
 
   #[inline(always)]
-  fn load(self,source: &Source)-> u32 {
+  pub(crate) fn load(self,source: &Source)-> u32 {
     if self.is_inline() {
-      return self.as_u32();
+      return unsafe { self.as_inline_len_unchecked() as u32 };
     }
 
-    let len_id=self.as_len_id();
+    unsafe {
+      self.load_outline_unchecked(source)
+    }
+  }
+
+  #[inline(always)]
+  /// SAFETY: the caller must hold that `self` is a overflowing `Len`.
+  pub(crate) unsafe fn load_outline_unchecked(self,source: &Source)-> u32 {
+    // SAFETY: held by the caller
+    let len_id=unsafe { self.as_len_id_unchecked() };
 
     source.get_overflowing_len(len_id)
   }
