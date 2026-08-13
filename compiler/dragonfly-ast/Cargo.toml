@@ -7,6 +7,8 @@ edition = "2024"
 thiserror.workspace = true
 dragonfly-span = { path = "../dragonfly-span/" }
 dragonfly-lexer = { path = "../dragonfly-lexer/" }
+dragonfly-index = { path = "../dragonfly-index/" }
+dragonfly-stable-hash = { path = "../dragonfly-stable-hash/" }
 
 
 

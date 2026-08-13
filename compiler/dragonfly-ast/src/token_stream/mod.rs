@@ -132,11 +132,16 @@ impl Default for TokenStream {
 
 impl TokenTree {
   #[inline(always)]
-  pub fn span(&self)-> Span {
+  pub const fn span(&self)-> Span {
     match self {
       Self::Token(token)=> token.span,
       Self::Group(group)=> group.span,
     }
+  }
+
+  #[inline(always)]
+  pub const fn is_group(&self)-> bool {
+    matches!(self,Self::Group(_))
   }
 }
 

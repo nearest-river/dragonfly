@@ -1,7 +1,7 @@
 
 use crate::prelude::*;
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Copy,Hash)]
 pub struct Ident {
   pub span: Span,
   pub is_raw: bool,
@@ -37,6 +37,11 @@ impl Ident {
     }
   }
 }
+
+
+
+
+
 
 
 

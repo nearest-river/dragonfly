@@ -16,7 +16,15 @@ pub mod bindings;
 
 
 // use rustc_hashes::{Hash64, Hash128};
-pub use hash::*;
+
+pub use dragonfly_stable_hash_macros::StableHash;
+pub use hash::{
+  StableHash,
+  StableHashCtxt,
+  ToStableHashKey,
+  StableHashControls,
+};
+
 pub use rustc_stable_hash::{
   FromStableHash,
   StableSipHasher128 as StableHasher,

@@ -2,7 +2,6 @@
 mod util;
 mod lexer;
 mod token_hint;
-mod lex_tracker;
 
 pub mod error;
 pub mod ident;
@@ -11,6 +10,8 @@ pub mod literal;
 pub mod prelude;
 pub mod comment;
 pub mod lifetime;
+#[doc(hidden)]
+pub mod lex_tracker;
 
 pub use crate::{
   token::*,

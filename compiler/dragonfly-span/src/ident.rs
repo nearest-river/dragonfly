@@ -19,7 +19,7 @@ impl Ident {
 
   #[inline(always)]
   pub fn with_dummy_span(name: Symbol)-> Self {
-    Ident::new(name,Span::call_site())
+    Ident::new(name,Span::dummy())
   }
 
   pub fn as_str(&self)-> &str {

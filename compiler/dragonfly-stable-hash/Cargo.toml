@@ -8,5 +8,6 @@ authors.workspace = true
 
 [dependencies]
 rustc-stable-hash.workspace = true
+dragonfly-stable-hash-macros = { path = "../dragonfly-stable-hash-macros/" }
 
 

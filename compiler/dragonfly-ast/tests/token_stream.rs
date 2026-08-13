@@ -8,20 +8,20 @@ static LIFETIMES: &[u8]=include_bytes!("../../assets/lifetimes.df");
 
 #[test]
 fn main() {
-  test_lexer(MAIN);
+  test_parser(MAIN);
 }
 
 #[test]
 fn chars() {
-  test_lexer(CHARS);
+  test_parser(CHARS);
 }
 
 #[test]
 fn lifetimes() {
-  test_lexer(LIFETIMES);
+  test_parser(LIFETIMES);
 }
 
-fn test_lexer(buf: &[u8]) {
+fn test_parser(buf: &[u8]) {
   println!("{:#?}",TokenStream::parse(buf).unwrap());
 }
 

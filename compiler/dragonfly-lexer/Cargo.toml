@@ -16,6 +16,13 @@ lexical-core.workspace = true
 lexical-util.workspace = true
 unicode-id-start.workspace = true
 
+[dev-dependencies]
+proptest.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "lexer"
+harness = false
 
 
 

@@ -32,9 +32,10 @@ pub struct SourceMap {
 }
 
 pub struct Source {
-  #[allow(unused)]
   pub(crate) buf: Vec<u8>,
   pub(crate) overflowing_len_map: MonotonicVec<u32>,
+  #[allow(unused)]
+  pub(crate) char_idx_map: MonotonicVec<u32>,
 }
 
 #[derive(Clone,Copy,Hash,StableHash)]
@@ -147,7 +148,13 @@ impl Source {
     Self {
       buf,
       overflowing_len_map: MonotonicVec::new(),
+      char_idx_map: MonotonicVec::new(),
     }
+  }
+
+  #[inline(always)]
+  pub fn insert_char_idx(&mut self,_char_idx: u32,_byte_idx: u32) {
+    todo!()
   }
 
   #[inline]

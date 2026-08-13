@@ -1,4 +1,4 @@
-#![feature(dropck_eyepatch,test)]
+#![feature(dropck_eyepatch)]
 
 mod chunk;
 pub mod marker;
